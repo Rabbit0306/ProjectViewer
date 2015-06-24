@@ -4,28 +4,40 @@
                 success(function(data, status, headers, config){
                     $scope.companys = data;
                 });
+        $scope.clickToOrder = function(orderKey){
+            if($scope.orderProp == orderKey){
+                $scope.orderProp = '-' + orderKey;
+            } else {
+                $scope.orderProp = orderKey;
+            }
+        };
+        $scope.orderProp = 'companyId';
     });
 </script>
 
 <div ng-app="ngApp" ng-controller="CompanyCtrl">
     <div class="container">
         <h1>Company</h1>
-        <a href="/test">aaa</a>
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Index</th>
-                    <th>Company Name</th>
+                    <th>Check</th>
+                    <th ng-click="clickToOrder('companyId')">Company Id</th>
+                    <th ng-click="clickToOrder('name')">Company Name</th>
+                    <th ng-click="clickToOrder('clientId')">Client Id</th>
+                    <th ng-click="clickToOrder('obsolete')">Obsolete</th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="company in companys">
-                    <td ng-bind="$index + 1"></td>
+                <tr ng-repeat="company in companys | filter:query | orderBy:orderProp">
+                    <td><input type="checkbox"/></td>
+                    <td ng-bind="company.companyId"></td>
                     <td ng-bind="company.name"></td>
                     <td ng-bind="company.clientId"></td>
-                    <td><input type="checkbox" ng-model="company.done"></td>
+                    <td><input type="checkbox" ng-model="company.obsolete"/></td>
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
+
