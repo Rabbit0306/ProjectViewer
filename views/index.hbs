@@ -1,0 +1,31 @@
+<script>
+    angular.module('ngApp', []).controller('CompanyCtrl', function ($scope, $http) {
+        $http({method:'GET', url:'http://10.10.73.207:1339/rest/company'}).
+                success(function(data, status, headers, config){
+                    $scope.companys = data;
+                });
+    });
+</script>
+
+<div ng-app="ngApp" ng-controller="CompanyCtrl">
+    <div class="container">
+        <h1>Company</h1>
+        <a href="/test">aaa</a>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Index</th>
+                    <th>Company Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="company in companys">
+                    <td ng-bind="$index + 1"></td>
+                    <td ng-bind="company.name"></td>
+                    <td ng-bind="company.clientId"></td>
+                    <td><input type="checkbox" ng-model="company.done"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
