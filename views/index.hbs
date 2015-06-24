@@ -5,13 +5,22 @@
                     $scope.companys = data;
                 });
         $scope.clickToOrder = function(orderKey){
-            if($scope.orderProp == orderKey){
-                $scope.orderProp = '-' + orderKey;
+            if($scope.orderPropC == orderKey){
+                $scope.orderPropC = '-' + orderKey;
             } else {
-                $scope.orderProp = orderKey;
+                $scope.orderPropC = orderKey;
             }
         };
-        $scope.orderProp = 'companyId';
+        $scope.getRecentCompany = function(event){
+            $scope.recentCompanyName = event.currentTarget.cells[3].innerText;
+            $scope.recentCompanyId = event.currentTarget.cells[2].innerText;
+            $http({method:'GET', url:'http://10.10.73.207:1339/rest/company/' + $scope.recentCompanyId + '/projects'}).
+                success(function(data, status, headers, config){
+                        $scope.projectsInfo = data;
+                        document.getElementById('myModalLabel').innerText = $scope.recentCompanyName;
+                    });
+        };
+        $scope.orderPropC = 'companyId';
     });
 </script>
 
@@ -26,18 +35,58 @@
                     <th ng-click="clickToOrder('name')">Company Name</th>
                     <th ng-click="clickToOrder('clientId')">Client Id</th>
                     <th ng-click="clickToOrder('obsolete')">Obsolete</th>
+                    <th>Projects</th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="company in companys | filter:query | orderBy:orderProp">
+                <tr ng-repeat="company in companys | filter:query | orderBy:orderPropC" ng-click="getRecentCompany($event)">
+                    <td ng-bind="company._id" style="display: none"></td>
                     <td><input type="checkbox"/></td>
                     <td ng-bind="company.companyId"></td>
                     <td ng-bind="company.name"></td>
                     <td ng-bind="company.clientId"></td>
                     <td><input type="checkbox" ng-model="company.obsolete"/></td>
+                    <td><button type="button" class="btn btn-xs btn-info" data-toggle="modal" data-target="#myModal">Watch</button></td>
                 </tr>
             </tbody>
         </table>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 class="modal-title" id="myModalLabel"></h3>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Projects</h4>
+                        <!--<table class="table table-hover">-->
+                            <!--<thead>-->
+                            <!--<tr>-->
+                                <!--<th>Check</th>-->
+                                <!--<th>Project Name</th>-->
+                                <!--<th>Company Name</th>-->
+                            <!--</tr>-->
+                            <!--</thead>-->
+                            <!--<tbody>-->
+                            <!--<tr ng-repeat="company in companys | filter:query | orderBy:orderProp" ng-click="getRecentCompany($event)">-->
+                                <!--<td ng-bind="company._id" style="display: none"></td>-->
+                                <!--<td><input type="checkbox"/></td>-->
+                                <!--<td ng-bind="company.companyId"></td>-->
+                                <!--<td ng-bind="company.name"></td>-->
+                                <!--<td ng-bind="company.clientId"></td>-->
+                                <!--<td><input type="checkbox" ng-model="company.obsolete"/></td>-->
+                                <!--<td><button type="button" class="btn btn-xs btn-info" data-toggle="modal" data-target="#myModal">Watch</button></td>-->
+                            <!--</tr>-->
+                            <!--</tbody>-->
+                        <!--</table>-->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
