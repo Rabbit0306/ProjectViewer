@@ -3,12 +3,11 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.cookie('username','三千翔');
-  res.render('index', { title: 'Express' });
+  res.render('indexr', { title: 'Express' });
 });
 
-router.get('/test',function(req, res, next){
-  console.log(req.cookies);
+router.get('/write',function(req, res, next){
+  res.render('indexw', { title: 'Express' });
 });
 
 module.exports = router;
