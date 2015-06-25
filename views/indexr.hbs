@@ -58,7 +58,6 @@
                     <th ng-click="clickToOrderC('companyId')">Company Id</th>
                     <th ng-click="clickToOrderC('name')">Company Name</th>
                     <th ng-click="clickToOrderC('clientId')">Client Id</th>
-                    <th ng-click="clickToOrderC('obsolete')">Obsolete</th>
                     <th>Projects</th>
                 </tr>
             </thead>
@@ -69,7 +68,6 @@
                     <td ng-bind="company.companyId"></td>
                     <td ng-bind="company.name"></td>
                     <td ng-bind="company.clientId"/></td>
-                    <td ng-bind="company.obsolete"></td>
                     <td><button type="button" class="btn btn-xs btn-info" data-toggle="modal" data-target="#myModal">Watch</button></td>
                 </tr>
             </tbody>
@@ -90,7 +88,6 @@
                                 <th ng-click="clickToOrderP('projectId')">Project Id</th>
                                 <th ng-click="clickToOrderP('name')">Name</th>
                                 <th ng-click="clickToOrderP('currentVersion')">Version</th>
-                                <th ng-click="clickToOrderP('obsolete')">Obsolete</th>
                                 <th ng-click="clickToOrderP('isProduct')">Product</th>
                                 <th ng-click="clickToOrderP('isWebService')">Web</th>
                                 <th ng-click="clickToOrderP('isPAPI')">API</th>
@@ -105,7 +102,6 @@
                                 <td ng-bind="recentProject.projectId"></td>
                                 <td ng-bind="recentProject.name"></td>
                                 <td ng-bind="recentProject.currentVersion"></td>
-                                <td><input type="checkbox" ng-model="recentProject.obsolete"/></td>
                                 <td><input type="checkbox" ng-model="recentProject.isProduct"/></td>
                                 <td><input type="checkbox" ng-model="recentProject.isWebService"/></td>
                                 <td><input type="checkbox" ng-model="recentProject.isPAPI"/></td>
