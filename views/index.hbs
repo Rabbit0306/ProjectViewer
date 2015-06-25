@@ -1,26 +1,50 @@
 <script>
     angular.module('ngApp', []).controller('CompanyCtrl', function ($scope, $http) {
+        var proIndex = 0, proMax = 0;
+        $scope.recentProjects = [];
         $http({method:'GET', url:'http://10.10.73.207:1339/rest/company'}).
                 success(function(data, status, headers, config){
                     $scope.companys = data;
                 });
-        $scope.clickToOrder = function(orderKey){
+        $scope.clickToOrderC = function(orderKey){
             if($scope.orderPropC == orderKey){
                 $scope.orderPropC = '-' + orderKey;
             } else {
                 $scope.orderPropC = orderKey;
             }
         };
-        $scope.getRecentCompany = function(event){
+        $scope.clickToOrderP = function(orderKey){
+            if($scope.orderPropP == orderKey){
+                $scope.orderPropP = '-' + orderKey;
+            } else {
+                $scope.orderPropP = orderKey;
+            }
+        };
+        $scope.resOfCompany = function(event){
+            $scope.recentProjects = [];
             $scope.recentCompanyName = event.currentTarget.cells[3].innerText;
             $scope.recentCompanyId = event.currentTarget.cells[2].innerText;
-            $http({method:'GET', url:'http://10.10.73.207:1339/rest/company/' + $scope.recentCompanyId + '/projects'}).
-                success(function(data, status, headers, config){
-                        $scope.projectsInfo = data;
-                        document.getElementById('myModalLabel').innerText = $scope.recentCompanyName;
-                    });
+            if(event.target.tagName.toLowerCase() == 'button'){
+                $http({method:'GET', url:'http://10.10.73.207:1339/rest/company/' + $scope.recentCompanyId + '/projects'}).
+                        success(function(data, status, headers, config){
+                            proMax = data.length;
+                            for(var i = 0; i < data.length; i++){
+                                $http({method:'GET', url:'http://10.10.73.207:1339' + data[i].href}).
+                                        success(function(data, status, headers, config){
+                                            $scope.recentProjects[proIndex] = data;
+                                            proIndex++;
+                                            if(proIndex == proMax) proIndex = 0;
+                                        });
+                            }
+                        });
+            } else if(event.target.tagName.toLowerCase() == 'td'){
+            }
+        };
+        $scope.loseFocus = function(){
+            console.log('lost');
         };
         $scope.orderPropC = 'companyId';
+        $scope.orderPropP = 'name';
     });
 </script>
 
@@ -31,54 +55,66 @@
             <thead>
                 <tr>
                     <th>Check</th>
-                    <th ng-click="clickToOrder('companyId')">Company Id</th>
-                    <th ng-click="clickToOrder('name')">Company Name</th>
-                    <th ng-click="clickToOrder('clientId')">Client Id</th>
-                    <th ng-click="clickToOrder('obsolete')">Obsolete</th>
+                    <th ng-click="clickToOrderC('companyId')">Company Id</th>
+                    <th ng-click="clickToOrderC('name')">Company Name</th>
+                    <th ng-click="clickToOrderC('clientId')">Client Id</th>
+                    <th ng-click="clickToOrderC('obsolete')">Obsolete</th>
                     <th>Projects</th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="company in companys | filter:query | orderBy:orderPropC" ng-click="getRecentCompany($event)">
+                <tr ng-repeat="company in companys | filter:query | orderBy:orderPropC" ng-click="resOfCompany($event)">
                     <td ng-bind="company._id" style="display: none"></td>
                     <td><input type="checkbox"/></td>
-                    <td ng-bind="company.companyId"></td>
-                    <td ng-bind="company.name"></td>
-                    <td ng-bind="company.clientId"></td>
+                    <td><input style="border:none;" type="text" ng-model="company.companyId"/></td>
+                    <td><input type="text" ng-model="company.name"/></td>
+                    <td><input type="text" ng-model="company.clientId"/></td>
                     <td><input type="checkbox" ng-model="company.obsolete"/></td>
                     <td><button type="button" class="btn btn-xs btn-info" data-toggle="modal" data-target="#myModal">Watch</button></td>
                 </tr>
             </tbody>
         </table>
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h3 class="modal-title" id="myModalLabel"></h3>
+                        <h3 class="modal-title" id="myModalLabel" ng-bind="recentCompanyName"></h3>
                     </div>
                     <div class="modal-body">
                         <h4>Projects</h4>
-                        <!--<table class="table table-hover">-->
-                            <!--<thead>-->
-                            <!--<tr>-->
-                                <!--<th>Check</th>-->
-                                <!--<th>Project Name</th>-->
-                                <!--<th>Company Name</th>-->
-                            <!--</tr>-->
-                            <!--</thead>-->
-                            <!--<tbody>-->
-                            <!--<tr ng-repeat="company in companys | filter:query | orderBy:orderProp" ng-click="getRecentCompany($event)">-->
-                                <!--<td ng-bind="company._id" style="display: none"></td>-->
-                                <!--<td><input type="checkbox"/></td>-->
-                                <!--<td ng-bind="company.companyId"></td>-->
-                                <!--<td ng-bind="company.name"></td>-->
-                                <!--<td ng-bind="company.clientId"></td>-->
-                                <!--<td><input type="checkbox" ng-model="company.obsolete"/></td>-->
-                                <!--<td><button type="button" class="btn btn-xs btn-info" data-toggle="modal" data-target="#myModal">Watch</button></td>-->
-                            <!--</tr>-->
-                            <!--</tbody>-->
-                        <!--</table>-->
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Check</th>
+                                <th ng-click="clickToOrderP('projectId')">Project Id</th>
+                                <th ng-click="clickToOrderP('name')">Name</th>
+                                <th ng-click="clickToOrderP('currentVersion')">Version</th>
+                                <th ng-click="clickToOrderP('obsolete')">Obsolete</th>
+                                <th ng-click="clickToOrderP('isProduct')">Product</th>
+                                <th ng-click="clickToOrderP('isWebService')">Web</th>
+                                <th ng-click="clickToOrderP('isPAPI')">API</th>
+                                <th ng-click="clickToOrderP('isUtility')">Utility</th>
+                                <th ng-click="clickToOrderP('isCodeBase')">CodeBase</th>
+                                <th ng-click="clickToOrderP('isPlugin')">Plugin</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="recentProject in recentProjects | filter:query | orderBy:orderPropP">
+                                <td><input type="checkbox"/></td>
+                                <td ng-bind="recentProject.projectId"></td>
+                                <td ng-bind="recentProject.name"></td>
+                                <td ng-bind="recentProject.currentVersion"></td>
+                                <td><input type="checkbox" ng-model="recentProject.obsolete"/></td>
+                                <td><input type="checkbox" ng-model="recentProject.isProduct"/></td>
+                                <td><input type="checkbox" ng-model="recentProject.isWebService"/></td>
+                                <td><input type="checkbox" ng-model="recentProject.isPAPI"/></td>
+                                <td><input type="checkbox" ng-model="recentProject.isUtility"/></td>
+                                <td><input type="checkbox" ng-model="recentProject.isCodeBase"/></td>
+                                <td><input type="checkbox" ng-model="recentProject.isPlugin"/></td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
