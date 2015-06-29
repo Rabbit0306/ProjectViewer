@@ -10,4 +10,13 @@ router.get('/write',function(req, res, next){
   res.render('indexw', { title: 'Express' });
 });
 
+router.get('/jj',function(req, res, next){
+  res.render('jquery', { title: 'Express' });
+});
+
+router.post('/', function(req, res, next) {
+  console.log(req.body);
+  res.render('indexw', { title: 'Express' });
+});
+
 module.exports = router;

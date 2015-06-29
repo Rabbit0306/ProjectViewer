@@ -41,8 +41,15 @@
             }
         };
         $scope.lostFocus = function(event){
-            console.log('lost');
-        }
+            console.log($scope.companys);
+            $.ajax({
+                type: 'post',
+                url: '/',
+                data: $scope.companys,
+                success: function(msg){
+                }
+            });
+        };
         $scope.orderPropC = 'companyId';
         $scope.orderPropP = 'name';
     });
@@ -50,7 +57,7 @@
 
 <div ng-app="ngApp" ng-controller="CompanyCtrl">
     <div class="container">
-        <h1>Company</h1>
+        <h1>Company - Editor</h1>
         <table class="table table-hover">
             <thead>
                 <tr>
